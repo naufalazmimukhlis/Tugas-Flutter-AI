@@ -31,7 +31,6 @@ class RecipeNotifier extends StateNotifier<RecipeState> {
 
   Future<void> _loadAvailableModel() async {
     final apiKey = dotenv.env['GEMINI_API_KEY'];
-
     final url = Uri.parse(
       'https://generativelanguage.googleapis.com/v1/models?key=$apiKey',
     );
@@ -39,15 +38,10 @@ class RecipeNotifier extends StateNotifier<RecipeState> {
     final response = await http.get(url);
     final data = jsonDecode(response.body);
 
-    if (data['models'] == null) {
-      throw Exception("Gagal mengambil daftar model");
-    }
-
-    // Ambil model yang support generateContent
     for (final model in data['models']) {
       final methods = model['supportedGenerationMethods'] ?? [];
       if (methods.contains('generateContent')) {
-        _modelName = model['name']; 
+        _modelName = model['name'];
         break;
       }
     }
@@ -64,10 +58,6 @@ class RecipeNotifier extends StateNotifier<RecipeState> {
 
     try {
       final apiKey = dotenv.env['GEMINI_API_KEY'];
-      if (apiKey == null || apiKey.isEmpty) {
-        throw Exception("API Key tidak ditemukan");
-      }
-
       _modelName ??= await (() async {
         await _loadAvailableModel();
         return _modelName!;
@@ -87,8 +77,7 @@ class RecipeNotifier extends StateNotifier<RecipeState> {
                 {
                   "text":
                       "Berikan resep masakan $menu dalam bahasa Indonesia.\n"
-                      "Format:\n1. Bahan-bahan\n2. Cara membuat\n"
-                      "Gunakan bahasa sederhana."
+                      "Format:\n1. Bahan-bahan\n2. Cara membuat"
                 }
               ]
             }
@@ -97,11 +86,6 @@ class RecipeNotifier extends StateNotifier<RecipeState> {
       );
 
       final data = jsonDecode(response.body);
-
-      if (data['candidates'] == null) {
-        throw Exception(data['error']?['message'] ?? "API Error");
-      }
-
       final text =
           data['candidates'][0]['content']['parts'][0]['text'];
 
@@ -147,19 +131,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  late final TextEditingController controller;
-
-  @override
-  void initState() {
-    super.initState();
-    controller = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
+  final controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -174,67 +146,83 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         backgroundColor: Colors.orange,
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            TextField(
-              controller: controller,
-              decoration: const InputDecoration(
-                labelText: "Masukkan Nama Masakan",
-                hintText: "Contoh: Ayam Goreng",
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.restaurant_menu),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final bool isWide = constraints.maxWidth > 700;
+
+          return Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: isWide ? 650 : double.infinity,
               ),
-            ),
-            const SizedBox(height: 15),
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: state.loading
-                    ? null
-                    : () {
-                        ref
-                            .read(recipeProvider.notifier)
-                            .cariResep(controller.text);
-                      },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  foregroundColor: Colors.white,
-                ),
-                child: state.loading
-                    ? const CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 2,
-                      )
-                    : const Text(
-                        "Dapatkan Resep",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: Container(
-                width: double.infinity,
+              child: Padding(
                 padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.orange.withOpacity(0.05),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.orange.shade200),
-                ),
-                child: SingleChildScrollView(
-                  child: Text(
-                    state.hasil,
-                    style: const TextStyle(fontSize: 15, height: 1.6),
-                  ),
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: controller,
+                      decoration: const InputDecoration(
+                        labelText: "Masukkan Nama Masakan",
+                        hintText: "Contoh: Ayam Goreng",
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.restaurant_menu),
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: state.loading
+                            ? null
+                            : () {
+                                ref
+                                    .read(recipeProvider.notifier)
+                                    .cariResep(controller.text);
+                              },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orange,
+                          foregroundColor: Colors.white,
+                        ),
+                        child: state.loading
+                            ? const CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              )
+                            : const Text(
+                                "Dapatkan Resep",
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.orange.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                              color: Colors.orange.shade200),
+                        ),
+                        child: SingleChildScrollView(
+                          child: Text(
+                            state.hasil,
+                            style: const TextStyle(
+                                fontSize: 15, height: 1.6),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

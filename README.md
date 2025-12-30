@@ -1,16 +1,31 @@
-# tugas_flutter_ai
+Cara Menggunakan Aplikasi
+🍳 Koki AI: Resep Kilat
 
-A new Flutter project.
+---Buka aplikasi
+Jalankan aplikasi Koki AI: Resep Kilat di perangkat Anda.
 
-## Getting Started
+---Masukkan nama masakan
+Ketik nama masakan yang ingin dicari resepnya pada kolom input.
+Contoh:
 
-This project is a starting point for a Flutter application.
+Nasi Goreng
 
-A few resources to get you started if this is your first Flutter project:
+Ayam Bakar
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Rendang
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+---Tekan tombol “Dapatkan Resep”
+Setelah nama masakan dimasukkan, tekan tombol Dapatkan Resep.
+
+---Tunggu proses berlangsung
+Aplikasi akan menampilkan indikator loading dengan pesan bahwa Koki AI sedang memproses permintaan.
+
+---Lihat hasil resep
+Resep masakan akan ditampilkan di bagian bawah layar, berisi:
+
+Daftar bahan-bahan
+
+Langkah-langkah cara membuat
+
+---Cari resep lain
+Untuk mencari resep lainnya, masukkan nama masakan baru dan tekan kembali tombol Dapatkan Resep.
