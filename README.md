@@ -2,7 +2,7 @@ Cara Menggunakan Aplikasi
 🍳 Koki AI: Resep Kilat
 
 ---Buka aplikasi
-Jalankan aplikasi Koki AI: Resep Kilat di perangkat Anda.
+Jalankan aplikasi Koki AI: Resep Kilat.
 
 ---Masukkan nama masakan
 Ketik nama masakan yang ingin dicari resepnya pada kolom input.
